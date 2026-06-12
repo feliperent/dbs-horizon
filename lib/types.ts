@@ -52,3 +52,11 @@ export interface DivergenceFlag {
   threshold: string;
   triggered: boolean;
 }
+
+export interface Account {
+  id: string;
+  owner: "joint" | "aaron" | "linwei";
+  label: string;
+  balance: number;
+  currency: string;
+}

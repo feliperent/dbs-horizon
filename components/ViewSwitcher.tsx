@@ -1,5 +1,6 @@
 "use client";
 import { aaron, linwei } from "@/lib/mockData";
+import PartnerAvatar from "./PartnerAvatar";
 import type { Partner } from "@/lib/types";
 
 interface Props {
@@ -9,10 +10,10 @@ interface Props {
 }
 
 export default function ViewSwitcher({ value, onChange, compact = false }: Props) {
-  const opts: { id: Partner; label: string; sub: string; cls: string }[] = [
+  const opts: { id: Partner; label: string; sub: string; cls: string; who?: "aaron" | "linwei" }[] = [
     { id: "joint", label: "Joint", sub: "shared by both", cls: "bg-dbsRed text-white" },
-    { id: "aaron", label: "Aaron", sub: aaron.role, cls: "bg-sky-600 text-white" },
-    { id: "linwei", label: "Lin Wei", sub: linwei.role, cls: "bg-rose-600 text-white" },
+    { id: "aaron", label: "Aaron", sub: aaron.role, cls: "bg-sky-600 text-white", who: "aaron" },
+    { id: "linwei", label: "Lin Wei", sub: linwei.role, cls: "bg-rose-600 text-white", who: "linwei" },
   ];
   if (compact) {
     return (
@@ -41,12 +42,20 @@ export default function ViewSwitcher({ value, onChange, compact = false }: Props
             key={o.id}
             onClick={() => onChange(o.id)}
             className={
-              "flex flex-col items-start text-left px-3 py-2 rounded-xl transition-colors min-w-[110px] " +
+              "flex items-center gap-2 px-3 py-2 rounded-xl transition-colors min-w-[130px] " +
               (active ? o.cls : "text-dbsInk hover:bg-dbsSurface")
             }
           >
-            <span className="text-xs font-bold uppercase tracking-wide">{o.label}</span>
-            <span className="text-[10px] opacity-80 truncate w-full">{o.sub}</span>
+            {o.who && <PartnerAvatar who={o.who} size={26} />}
+            {!o.who && (
+              <div className="w-6 h-6 rounded-full bg-white text-dbsRed flex items-center justify-center text-[10px] font-extrabold border border-current">
+                A+L
+              </div>
+            )}
+            <div className="text-left">
+              <span className="block text-xs font-bold uppercase tracking-wide leading-tight">{o.label}</span>
+              <span className="block text-[10px] opacity-80 truncate w-[88px]">{o.sub}</span>
+            </div>
           </button>
         );
       })}

@@ -7,6 +7,7 @@ export const aaron = {
   salaryMonthly: 9400,
   city: "Singapore",
   initials: "AL",
+  photo: "/aaron.jpg",
   accentClass: "text-sky-600",
   accentBg: "bg-sky-50",
 };
@@ -18,9 +19,29 @@ export const linwei = {
   salaryMonthly: 3800,
   city: "Singapore",
   initials: "LW",
+  photo: "/linwei.jpg",
   accentClass: "text-rose-600",
   accentBg: "bg-rose-50",
 };
+
+export const atlasActor = {
+  name: "Atlas",
+  role: "Couple financial mediator",
+  photo: "/atlas-actor.jpg",
+  oneLine: "I will not pick. I will surface the cost of every path and the values each of you flagged.",
+};
+
+export const accounts = [
+  { id: "a1", owner: "joint", label: "DBS Joint Multi-currency", balance: 38400, currency: "SGD" },
+  { id: "a2", owner: "joint", label: "POSB everyday savings (joint)", balance: 12150, currency: "SGD" },
+  { id: "a3", owner: "joint", label: "BTO down-payment fund", balance: 4200, currency: "SGD" },
+  { id: "a4", owner: "aaron", label: "DBS My Account (Aaron)", balance: 11340, currency: "SGD" },
+  { id: "a5", owner: "aaron", label: "DBS Vickers (Aaron)", balance: 28600, currency: "SGD" },
+  { id: "a6", owner: "aaron", label: "CPF Ordinary Account (Aaron)", balance: 64800, currency: "SGD" },
+  { id: "a7", owner: "linwei", label: "DBS My Account (Lin Wei)", balance: 5980, currency: "SGD" },
+  { id: "a8", owner: "linwei", label: "Wise EUR + USD (Lin Wei)", balance: 3120, currency: "SGD" },
+  { id: "a9", owner: "linwei", label: "CPF Ordinary Account (Lin Wei)", balance: 28400, currency: "SGD" },
+];
 
 export const couple = {
   marriedMonths: 14,

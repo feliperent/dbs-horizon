@@ -1,21 +1,25 @@
 "use client";
 import { useState } from "react";
 import AtlasAvatar from "@/components/AtlasAvatar";
+import PartnerAvatar from "@/components/PartnerAvatar";
 import ViewSwitcher from "@/components/ViewSwitcher";
-import { atlasJointThread, aaron, linwei } from "@/lib/mockData";
+import CheckInModal from "@/components/CheckInModal";
+import { atlasJointThread, aaron, linwei, atlasActor } from "@/lib/mockData";
 import { atlasReply, atlasGreeting } from "@/lib/ai";
-import type { Partner, AtlasMessage } from "@/lib/types";
+import type { AtlasMessage } from "@/lib/types";
+import { useCouple } from "@/lib/state";
 
 interface UIMessage extends AtlasMessage {
   ts: string;
 }
 
 export default function AtlasPage() {
-  const [view, setView] = useState<Partner>("joint");
+  const { view, setView, checkIn, notifications } = useCouple();
   const [thread, setThread] = useState<UIMessage[]>(
     atlasJointThread.map((m, i) => ({ ...m, ts: `${i + 1}m ago` }))
   );
   const [prompt, setPrompt] = useState("");
+  const [checkInOpen, setCheckInOpen] = useState(false);
 
   function speakerLabel(s: AtlasMessage["speaker"]) {
     if (s === "atlas") return "Atlas";
@@ -35,7 +39,7 @@ export default function AtlasPage() {
 
   function send() {
     if (!prompt.trim()) return;
-    const speaker = view === "joint" ? (Math.random() > 0.5 ? "aaron" : "linwei") : view;
+    const speaker = view === "joint" ? (thread.length % 2 === 0 ? "aaron" : "linwei") : view;
     const userMsg: UIMessage = {
       id: `u${thread.length + 1}`,
       speaker,
@@ -59,6 +63,9 @@ export default function AtlasPage() {
     return m.audience === "joint" || m.audience === view;
   });
 
+  const checkInProgressAaron = Object.values(checkIn.aaron).filter((v) => v !== null).length;
+  const checkInProgressLinWei = Object.values(checkIn.linwei).filter((v) => v !== null).length;
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -69,7 +76,7 @@ export default function AtlasPage() {
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-dbsInk">Always names both of you. Refuses to pick when the call is yours.</h1>
           <p className="text-sm text-dbsGray mt-1 max-w-2xl">
-            The avatar shifts shape with the audience: a three-dot constellation when Atlas speaks to the couple, a two-dot pair when speaking to one partner privately. Hue tints match the partner.
+            Switch the view to see the joint thread or each partner's private one. The avatar changes shape and hue with the audience.
           </p>
         </div>
         <ViewSwitcher value={view} onChange={setView} />
@@ -77,6 +84,18 @@ export default function AtlasPage() {
 
       <div className="grid md:grid-cols-3 gap-6">
         <aside className="md:col-span-1 space-y-4">
+          <div className="bg-white border border-dbsLine rounded-2xl p-4 shadow-soft">
+            <div className="flex items-center gap-3">
+              <PartnerAvatar who="atlas" size={56} ring />
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-dbsRed">Meet your Atlas</div>
+                <div className="text-sm font-bold text-dbsInk">{atlasActor.name}</div>
+                <div className="text-xs text-dbsGray">{atlasActor.role}</div>
+              </div>
+            </div>
+            <p className="text-xs italic text-dbsInk mt-3">"{atlasActor.oneLine}"</p>
+          </div>
+
           <div className="bg-white border border-dbsLine rounded-2xl p-4 shadow-soft">
             <div className="text-[10px] font-bold uppercase tracking-widest text-dbsGray">Atlas voice rules</div>
             <ul className="text-xs text-dbsInk mt-2 space-y-1.5 list-disc ml-4">
@@ -90,17 +109,47 @@ export default function AtlasPage() {
 
           <div className="bg-white border border-dbsLine rounded-2xl p-4 shadow-soft">
             <div className="text-[10px] font-bold uppercase tracking-widest text-dbsGray">Quarterly check-in</div>
-            <div className="text-sm font-bold text-dbsInk mt-1">Due 20 Jul</div>
-            <p className="text-xs text-dbsGray mt-1">10 questions each, separately. Neither partner sees the other's words. Atlas surfaces patterns only.</p>
-            <button className="mt-3 text-xs font-semibold px-3 py-1.5 rounded-md bg-dbsRed text-white hover:bg-dbsRedDark">Start the check-in</button>
+            <div className="text-sm font-bold text-dbsInk mt-1">
+              {checkIn.complete ? "Complete" : "Due 20 Jul"}
+            </div>
+            <div className="mt-2 text-xs text-dbsGray space-y-1">
+              <div className="flex items-center gap-2">
+                <PartnerAvatar who="aaron" size={16} />
+                <span>Aaron progress: {checkInProgressAaron}/10</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <PartnerAvatar who="linwei" size={16} />
+                <span>Lin Wei progress: {checkInProgressLinWei}/10</span>
+              </div>
+            </div>
+            <button
+              onClick={() => setCheckInOpen(true)}
+              className="mt-3 w-full text-xs font-semibold px-3 py-2 rounded-md bg-dbsRed text-white hover:bg-dbsRedDark"
+            >
+              {checkIn.complete ? "Re-open last check-in" : "Start the check-in"}
+            </button>
+            <div className="text-[10px] text-dbsGray mt-2 italic">
+              10 questions each, separately. Atlas reads both and surfaces patterns only, never raw answers.
+            </div>
           </div>
 
           <div className="bg-dbsRedLight border border-dbsRed/20 rounded-2xl p-4">
             <div className="text-[10px] font-bold uppercase tracking-widest text-dbsRedDark">The hard rule</div>
             <p className="text-xs text-dbsInk mt-1">
-              Atlas augments, never automates, decisions that carry emotional or relational weight. From the course "Missing Middle": value is in Amplify, Interact, Embody. Not Automate.
+              Atlas augments, never automates, decisions that carry emotional or relational weight. The course slide on the Missing Middle places the value in Amplify, Interact, Embody. Not Automate.
             </p>
           </div>
+
+          {notifications.length > 0 && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-700">Atlas log</div>
+              <ul className="mt-2 space-y-1 text-xs text-emerald-800">
+                {notifications.slice(0, 3).map((n, i) => (
+                  <li key={i}>· {n}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </aside>
 
         <main className="md:col-span-2 space-y-3">
@@ -112,23 +161,21 @@ export default function AtlasPage() {
                   {view === "joint" ? "Joint thread with Aaron and Lin Wei" : view === "aaron" ? `Private thread with ${aaron.name}` : `Private thread with ${linwei.name}`}
                 </div>
                 <div className="text-[11px] text-dbsGray">
-                  {view === "joint" ? "Both partners see every message in this thread." : "Lin Wei does not see this thread, only the aggregate."}
+                  {view === "joint" ? "Both partners see every message in this thread." : `${view === "aaron" ? "Lin Wei" : "Aaron"} does not see this thread, only the aggregate.`}
                 </div>
               </div>
             </div>
 
-            <div className="space-y-3 mt-3 max-h-[420px] overflow-y-auto pr-1">
+            <div className="space-y-3 mt-3 max-h-[480px] overflow-y-auto pr-1">
               {view !== "joint" && visible.length === 0 && (
                 <div className="p-3 rounded-lg border border-dbsLine bg-dbsSurface text-sm italic text-dbsGray">{atlasGreeting(view)}</div>
               )}
               {visible.map((m) => (
                 <div key={m.id} className="flex items-start gap-3">
                   {m.speaker === "atlas" ? (
-                    <AtlasAvatar mode={m.audience} size={28} />
+                    <AtlasAvatar mode={m.audience} size={32} />
                   ) : (
-                    <div className={`w-7 h-7 rounded-full text-white flex items-center justify-center text-[10px] font-bold ${m.speaker === "aaron" ? "bg-sky-600" : "bg-rose-600"}`}>
-                      {m.speaker === "aaron" ? aaron.initials : linwei.initials}
-                    </div>
+                    <PartnerAvatar who={m.speaker === "aaron" ? "aaron" : "linwei"} size={32} />
                   )}
                   <div className={`rounded-xl border px-3 py-2 ${speakerBg(m.speaker)} flex-1`}>
                     <div className="flex items-center justify-between mb-0.5">
@@ -148,7 +195,7 @@ export default function AtlasPage() {
                 rows={2}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Ask Atlas something. Try: 'we are stuck on BTO vs resale'"
+                placeholder="Ask Atlas. Try: 'we are stuck on BTO vs resale' or 'baby leave question'"
                 className="flex-1 text-sm border border-dbsLine rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-dbsRed/30"
               />
               <button
@@ -159,11 +206,13 @@ export default function AtlasPage() {
               </button>
             </div>
             <div className="text-[10px] text-dbsGray mt-1">
-              Atlas refuses to pick. It will surface the cost of each path and the values you flagged in your check-in.
+              Atlas refuses to pick. It surfaces the cost of every path and the values each of you flagged in your check-in.
             </div>
           </div>
         </main>
       </div>
+
+      <CheckInModal open={checkInOpen} onClose={() => setCheckInOpen(false)} />
     </div>
   );
 }

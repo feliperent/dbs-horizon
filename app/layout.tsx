@@ -2,10 +2,11 @@ import "./globals.css";
 import type { Metadata } from "next";
 import DBSHeader from "@/components/DBSHeader";
 import DBSFooter from "@/components/DBSFooter";
+import { CoupleStateProvider } from "@/lib/state";
 
 export const metadata: Metadata = {
-  title: "DBS Horizon",
-  description: "Write the rules. The bank runs them. You hold the irreversibles. A prototype.",
+  title: "DBS Horizon · Atlas",
+  description: "A couple financial mediator on top of DBS. Always names both partners, refuses to pick when the call is theirs.",
   icons: { icon: "/dbs-shield.png" },
 };
 
@@ -21,9 +22,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="min-h-screen flex flex-col">
-        <DBSHeader />
-        <main className="flex-1">{children}</main>
-        <DBSFooter />
+        <CoupleStateProvider>
+          <DBSHeader />
+          <main className="flex-1">{children}</main>
+          <DBSFooter />
+        </CoupleStateProvider>
       </body>
     </html>
   );
