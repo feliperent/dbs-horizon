@@ -4,7 +4,7 @@ export const aaron = {
   name: "Aaron Lim",
   age: 28,
   role: "Software engineer at Grab",
-  salaryMonthly: 9400,
+  salaryMonthly: 11400,
   city: "Singapore",
   initials: "AL",
   photo: "/aaron.jpg",
@@ -31,16 +31,19 @@ export const atlasActor = {
   oneLine: "I will not pick. I will surface the cost of every path and the values each of you flagged.",
 };
 
+// 3:1 income ratio reflected across savings + CPF.
+// Combined CPF OA = SGD 165,000 (matches the skit: \"joint CPF covers SGD 165k of Bishan down-payment\").
+// Cash gap on Bishan = SGD 42,000 (matches the skit goal).
 export const accounts = [
-  { id: "a1", owner: "joint", label: "DBS Joint Multi-currency", balance: 38400, currency: "SGD" },
+  { id: "a1", owner: "joint", label: "DBS Joint Multi-currency", balance: 18400, currency: "SGD" },
   { id: "a2", owner: "joint", label: "POSB everyday savings (joint)", balance: 12150, currency: "SGD" },
-  { id: "a3", owner: "joint", label: "BTO down-payment fund", balance: 4200, currency: "SGD" },
-  { id: "a4", owner: "aaron", label: "DBS My Account (Aaron)", balance: 11340, currency: "SGD" },
-  { id: "a5", owner: "aaron", label: "DBS Vickers (Aaron)", balance: 28600, currency: "SGD" },
-  { id: "a6", owner: "aaron", label: "CPF Ordinary Account (Aaron)", balance: 64800, currency: "SGD" },
-  { id: "a7", owner: "linwei", label: "DBS My Account (Lin Wei)", balance: 5980, currency: "SGD" },
-  { id: "a8", owner: "linwei", label: "Wise EUR + USD (Lin Wei)", balance: 3120, currency: "SGD" },
-  { id: "a9", owner: "linwei", label: "CPF Ordinary Account (Lin Wei)", balance: 28400, currency: "SGD" },
+  { id: "a3", owner: "joint", label: "Joint flat down-payment fund", balance: 38400, currency: "SGD" },
+  { id: "a4", owner: "aaron", label: "DBS My Account (Aaron)", balance: 14400, currency: "SGD" },
+  { id: "a5", owner: "aaron", label: "DBS Vickers (Aaron)", balance: 28800, currency: "SGD" },
+  { id: "a6", owner: "aaron", label: "CPF Ordinary Account (Aaron)", balance: 123750, currency: "SGD" },
+  { id: "a7", owner: "linwei", label: "DBS My Account (Lin Wei)", balance: 4800, currency: "SGD" },
+  { id: "a8", owner: "linwei", label: "Wise EUR + USD (Lin Wei)", balance: 9600, currency: "SGD" },
+  { id: "a9", owner: "linwei", label: "CPF Ordinary Account (Lin Wei)", balance: 41250, currency: "SGD" },
 ];
 
 export const couple = {

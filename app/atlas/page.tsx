@@ -5,7 +5,7 @@ import PartnerAvatar from "@/components/PartnerAvatar";
 import ViewSwitcher from "@/components/ViewSwitcher";
 import CheckInModal from "@/components/CheckInModal";
 import { atlasJointThread, aaron, linwei, atlasActor } from "@/lib/mockData";
-import { atlasReply, atlasGreeting } from "@/lib/ai";
+import { atlasReply, atlasGreeting, presetPrompts } from "@/lib/ai";
 import type { AtlasMessage } from "@/lib/types";
 import { useCouple } from "@/lib/state";
 
@@ -37,25 +37,26 @@ export default function AtlasPage() {
     return "bg-rose-600 text-white";
   }
 
-  function send() {
-    if (!prompt.trim()) return;
+  function send(text?: string) {
+    const txt = (text ?? prompt).trim();
+    if (!txt) return;
     const speaker = view === "joint" ? (thread.length % 2 === 0 ? "aaron" : "linwei") : view;
     const userMsg: UIMessage = {
       id: `u${thread.length + 1}`,
       speaker,
       audience: view === "joint" ? "joint" : view,
-      text: prompt.trim(),
+      text: txt,
       ts: "now",
     };
     const aiMsg: UIMessage = {
       id: `a${thread.length + 2}`,
       speaker: "atlas",
       audience: view === "joint" ? "joint" : view,
-      text: atlasReply(prompt, view),
+      text: atlasReply(txt, view),
       ts: "now",
     };
     setThread((t) => [...t, userMsg, aiMsg]);
-    setPrompt("");
+    if (!text) setPrompt("");
   }
 
   const visible = thread.filter((m) => {
@@ -84,16 +85,16 @@ export default function AtlasPage() {
 
       <div className="grid md:grid-cols-3 gap-6">
         <aside className="md:col-span-1 space-y-4">
-          <div className="bg-white border border-dbsLine rounded-2xl p-4 shadow-soft">
-            <div className="flex items-center gap-3">
-              <PartnerAvatar who="atlas" size={56} ring />
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-widest text-dbsRed">Meet your Atlas</div>
-                <div className="text-sm font-bold text-dbsInk">{atlasActor.name}</div>
-                <div className="text-xs text-dbsGray">{atlasActor.role}</div>
+          <div className="bg-white border border-dbsLine rounded-2xl shadow-soft overflow-hidden">
+            <div className="relative w-full" style={{ aspectRatio: "1 / 1" }}>
+              <PartnerAvatar who="atlas" size={320} className="!rounded-none w-full h-full" />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent p-4">
+                <div className="text-[10px] font-bold uppercase tracking-widest text-white/80">Meet Atlas</div>
+                <div className="text-xl font-extrabold text-white">{atlasActor.name}</div>
+                <div className="text-xs text-white/80">{atlasActor.role}</div>
               </div>
             </div>
-            <p className="text-xs italic text-dbsInk mt-3">"{atlasActor.oneLine}"</p>
+            <p className="text-xs italic text-dbsInk px-4 py-3">"{atlasActor.oneLine}"</p>
           </div>
 
           <div className="bg-white border border-dbsLine rounded-2xl p-4 shadow-soft">
@@ -190,20 +191,35 @@ export default function AtlasPage() {
               ))}
             </div>
 
-            <div className="mt-3 flex items-end gap-2 border-t border-dbsLine pt-3">
-              <textarea
-                rows={2}
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Ask Atlas. Try: 'we are stuck on BTO vs resale' or 'baby leave question'"
-                className="flex-1 text-sm border border-dbsLine rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-dbsRed/30"
-              />
-              <button
-                onClick={send}
-                className="bg-dbsRed text-white font-semibold px-4 py-2 rounded-md hover:bg-dbsRedDark"
-              >
-                Send
-              </button>
+            <div className="mt-3 border-t border-dbsLine pt-3">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-dbsGray mb-1.5">Quick prompts</div>
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {presetPrompts.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => send(p.prompt)}
+                    className="text-[11px] font-semibold px-3 py-1.5 rounded-full bg-dbsRedLight text-dbsRedDark border border-dbsRed/20 hover:bg-dbsRed hover:text-white transition-colors"
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-end gap-2">
+                <textarea
+                  rows={2}
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
+                  placeholder="Ask Atlas. Try one of the prompts above or write your own."
+                  className="flex-1 text-sm border border-dbsLine rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-dbsRed/30"
+                />
+                <button
+                  onClick={() => send()}
+                  className="bg-dbsRed text-white font-semibold px-4 py-2 rounded-md hover:bg-dbsRedDark"
+                >
+                  Send
+                </button>
+              </div>
             </div>
             <div className="text-[10px] text-dbsGray mt-1">
               Atlas refuses to pick. It surfaces the cost of every path and the values each of you flagged in your check-in.
