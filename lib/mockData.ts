@@ -60,7 +60,7 @@ export const envelopes: Envelope[] = [
   { id: "e1", name: "Groceries", scope: "joint", budget: 800, used: 612, category: "Living" },
   { id: "e2", name: "Dining out", scope: "joint", budget: 500, used: 487, category: "Living" },
   { id: "e3", name: "Utilities + Telco", scope: "joint", budget: 320, used: 305, category: "Living" },
-  { id: "e4", name: "BTO down-payment", scope: "joint", budget: 125000, used: 38400, category: "Goals" },
+  { id: "e4", name: "Joint flat down-payment fund", scope: "joint", budget: 42000, used: 38400, category: "Goals" },
   { id: "e5", name: "Baby fund (start Q3 2027)", scope: "joint", budget: 22000, used: 4100, category: "Goals" },
   { id: "e6", name: "Aaron discretionary", scope: "aaron", budget: 1400, used: 1820, category: "Personal" },
   { id: "e7", name: "Aaron SRS top-up", scope: "aaron", budget: 7300, used: 0, category: "Goals" },
