@@ -1,152 +1,117 @@
 "use client";
 import { useMemo, useState } from "react";
-import MirrorPortrait from "@/components/MirrorPortrait";
-import { customer } from "@/lib/mockData";
-import { generateMirrorMessage } from "@/lib/ai";
+import CouplePortrait from "@/components/CouplePortrait";
+import { aaron, linwei, couple } from "@/lib/mockData";
+
+function gapMessage(save: number): { text: string; pct: number; mood: "content" | "worried" | "proud" } {
+  const pct = Math.round(34 + (Math.min(1500, save) / 1500) * 52);
+  if (pct < 50) {
+    return {
+      text:
+        "Aaron and Lin Wei, future-you here. At this pace, retirement is okay but the BTO timeline slips and Baby Bonus doesn't stretch as far as you think. Push more into the joint fund.",
+      pct,
+      mood: "worried",
+    };
+  }
+  if (pct < 75) {
+    return {
+      text:
+        "Aaron and Lin Wei, comfortable retirement on track. The BTO is paid down on schedule. There is room for one year of unpaid leave when the time comes.",
+      pct,
+      mood: "content",
+    };
+  }
+  return {
+    text:
+      "Aaron and Lin Wei, future-us is comfortable. The flat is paid earlier. The CPF top-ups in your 30s are doing the heavy lifting. Keep the rhythm.",
+    pct,
+    mood: "proud",
+  };
+}
 
 export default function MirrorPage() {
-  const [save, setSave] = useState(300);
+  const [save, setSave] = useState(500);
   const [age, setAge] = useState(65);
-  const msg = useMemo(() => generateMirrorMessage(save), [save]);
-
+  const msg = useMemo(() => gapMessage(save), [save]);
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8">
-      <div className="mb-6">
-        <div className="text-[11px] font-bold uppercase tracking-widest text-dbsRed">Horizon Mirror</div>
-        <h1 className="text-2xl md:text-3xl font-extrabold text-dbsInk">
-          See yourself at 65. In your own parlance.
-        </h1>
+    <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
+      <div>
+        <div className="text-[11px] font-bold uppercase tracking-widest text-dbsRed">Horizon Mirror · Joint view</div>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-dbsInk">See yourselves at 65. Side by side.</h1>
         <p className="text-sm text-dbsGray mt-1 max-w-2xl">
-          The portrait, the message, and the comfort-gap meter come from your real DBS cashflow projected
-          forward. Pull the slider, the face changes, the parlance changes, the gap shrinks. Based on
-          Hershfield 2011 on future-self continuity.
+          Built from your joint CPF, account balances, and the goals you both ticked. Pull the slider,
+          the portraits update, the comfort meter moves. Based on Hershfield 2011, applied to the couple
+          rather than the individual.
         </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         <div className="bg-white border border-dbsLine rounded-2xl p-5 shadow-soft">
-          <div className="text-xs font-semibold uppercase tracking-wide text-dbsGray">Today</div>
-          <div className="text-base font-bold text-dbsInk">{customer.name}, {customer.age}</div>
-          <div className="aspect-square mt-3 bg-dbsSurface rounded-xl overflow-hidden border border-dbsLine">
-            <MirrorPortrait age={customer.age} mood="content" />
+          <div className="text-xs font-bold uppercase tracking-widest text-dbsGray">Today</div>
+          <div className="flex items-center gap-3 mt-2">
+            <div className="w-8 h-8 rounded-full bg-sky-600 text-white flex items-center justify-center text-xs font-bold">{aaron.initials}</div>
+            <div className="font-semibold text-sm text-dbsInk">{aaron.name}, {aaron.age}</div>
+            <div className="opacity-60">·</div>
+            <div className="w-8 h-8 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs font-bold">{linwei.initials}</div>
+            <div className="font-semibold text-sm text-dbsInk">{linwei.name}, {linwei.age}</div>
           </div>
-          <div className="mt-4 text-xs text-dbsGray">
-            Salary SGD {customer.salaryMonthly.toLocaleString()} per month · side SGD {customer.sideMonthly.toLocaleString()} per month
+          <div className="aspect-[14/10] mt-3 bg-dbsSurface rounded-xl border border-dbsLine overflow-hidden">
+            <CouplePortrait age={28} mood="content" />
+          </div>
+          <div className="text-xs text-dbsGray mt-3">
+            Joint savings rate this quarter: <strong>17.6%</strong> · joint emergency floor: SGD {couple.jointEmergencyFloor.toLocaleString()}
           </div>
         </div>
 
         <div className="bg-white border border-dbsLine rounded-2xl p-5 shadow-soft">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wide text-dbsGray">Future you</div>
-              <div className="text-base font-bold text-dbsInk">{customer.name}, age {age}</div>
+              <div className="text-xs font-bold uppercase tracking-widest text-dbsGray">Future-us at {age}</div>
+              <div className="text-sm font-semibold text-dbsInk mt-1">Comfort gap closed</div>
             </div>
-            <div className="text-right">
-              <div className="text-xs font-semibold uppercase tracking-wide text-dbsGray">Comfort gap closed</div>
-              <div
-                className={
-                  "text-2xl font-extrabold " +
-                  (msg.gapClosedPct >= 75
-                    ? "text-dbsGreen"
-                    : msg.gapClosedPct >= 50
-                    ? "text-dbsAmber"
-                    : "text-dbsRed")
-                }
-              >
-                {msg.gapClosedPct}%
-              </div>
+            <div
+              className={
+                "text-3xl font-extrabold " +
+                (msg.pct >= 75 ? "text-emerald-600" : msg.pct >= 50 ? "text-amber-600" : "text-dbsRed")
+              }
+            >
+              {msg.pct}%
             </div>
           </div>
-          <div className="aspect-square mt-3 bg-dbsSurface rounded-xl overflow-hidden border border-dbsLine">
-            <MirrorPortrait age={age} mood={msg.mood} />
+          <div className="aspect-[14/10] mt-3 bg-dbsSurface rounded-xl border border-dbsLine overflow-hidden">
+            <CouplePortrait age={age} mood={msg.mood} />
           </div>
           <div className="mt-3 p-3 rounded-lg bg-dbsRedLight border border-dbsRed/20 text-sm text-dbsInk italic">
-            “{msg.text}”
-            <div className="text-[11px] mt-1 not-italic text-dbsGray">Future you, in Singlish</div>
+            "{msg.text}"
+            <div className="not-italic text-[11px] mt-1 text-dbsGray">Atlas, addressing both</div>
           </div>
         </div>
       </div>
 
-      <div className="mt-6 grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-6">
         <div className="bg-white border border-dbsLine rounded-2xl p-5 shadow-soft">
-          <div className="text-xs font-semibold uppercase tracking-wide text-dbsGray">
-            What if I save this much more per month
-          </div>
+          <div className="text-xs font-bold uppercase tracking-widest text-dbsGray">Joint monthly save</div>
           <div className="text-2xl font-extrabold text-dbsInk mt-1">SGD {save.toLocaleString()}</div>
           <input
-            type="range"
-            min={0}
-            max={1500}
-            step={50}
-            value={save}
+            type="range" min={0} max={1500} step={50} value={save}
             onChange={(e) => setSave(parseInt(e.target.value))}
             className="w-full accent-dbsRed mt-2"
           />
           <div className="flex justify-between text-[10px] text-dbsGray mt-1">
-            <span>0</span>
-            <span>750</span>
-            <span>1500</span>
-          </div>
-          <div className="text-xs text-dbsGray mt-3">
-            Pull the slider. The portrait updates in real time, the parlance changes, the comfort gap
-            shrinks. No abstract chart can do this.
+            <span>0</span><span>750</span><span>1500</span>
           </div>
         </div>
-
         <div className="bg-white border border-dbsLine rounded-2xl p-5 shadow-soft">
-          <div className="text-xs font-semibold uppercase tracking-wide text-dbsGray">
-            See yourself at a different age
-          </div>
+          <div className="text-xs font-bold uppercase tracking-widest text-dbsGray">See yourselves at age</div>
           <div className="text-2xl font-extrabold text-dbsInk mt-1">{age}</div>
           <input
-            type="range"
-            min={40}
-            max={80}
-            step={1}
-            value={age}
+            type="range" min={40} max={80} step={1} value={age}
             onChange={(e) => setAge(parseInt(e.target.value))}
             className="w-full accent-dbsRed mt-2"
           />
           <div className="flex justify-between text-[10px] text-dbsGray mt-1">
-            <span>40</span>
-            <span>60</span>
-            <span>80</span>
+            <span>40</span><span>60</span><span>80</span>
           </div>
-          <div className="text-xs text-dbsGray mt-3">
-            The Mirror does not invent numbers. It projects your real cashflow forward and renders a face,
-            not a chart.
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-6 bg-white border border-dbsLine rounded-2xl p-5 shadow-soft">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-wide text-dbsGray">Petals</div>
-            <div className="flex flex-wrap gap-1 mt-1">
-              {["Information", "Consultation", "Hospitality"].map((p) => (
-                <span key={p} className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-dbsRedLight text-dbsRedDark">
-                  {p}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-wide text-dbsGray">AISAQUAL</div>
-            <div className="flex flex-wrap gap-1 mt-1">
-              {["Anthropomorphism", "Tangibility", "Personalisation", "Transparency"].map((a) => (
-                <span key={a} className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-dbsInk text-white">
-                  {a}
-                </span>
-              ))}
-            </div>
-          </div>
-          <a
-            href="/plan"
-            className="text-sm font-semibold px-4 py-2 rounded-md bg-dbsRed text-white hover:bg-dbsRedDark"
-          >
-            Set your rules in Plan →
-          </a>
         </div>
       </div>
     </div>

@@ -1,252 +1,186 @@
-import type { TimelineStep, FounderStage, MirrorMessage } from "./types";
+import type { Envelope, Scenario, AtlasMessage, DivergenceFlag } from "./types";
 
-export const customer = {
-  name: "Mei Tan",
-  age: 32,
-  role: "Senior Product Designer (Stripe) + founder of Kopi Studio (sole-prop, ACRA registered 2025-09-14)",
-  salaryMonthly: 11800,
-  sideMonthly: 3200,
-  baseCurrency: "SGD",
+export const aaron = {
+  name: "Aaron Lim",
+  age: 28,
+  role: "Software engineer at Grab",
+  salaryMonthly: 9400,
   city: "Singapore",
-  segmentNote: "Treasures pipeline, eligible in approx. 18 months at current trajectory",
+  initials: "AL",
+  accentClass: "text-sky-600",
+  accentBg: "bg-sky-50",
 };
 
-export const mirrorMessages: Record<string, MirrorMessage> = {
-  base: {
-    language: "Singlish",
-    text:
-      "Eh future-me here. At this rate I retire okay lah, but Kopi Studio still small. Push more into it now, your 65-year-old self got more story to tell.",
-    mood: "worried",
-    gapClosedPct: 38,
-  },
-  improved: {
-    language: "Singlish",
-    text:
-      "Future-me reporting. Last 12 months you ran the plan, you topped up SRS, you funded Kopi Studio. I retire comfortable and Kopi Studio is a real thing. Solid lah.",
-    mood: "proud",
-    gapClosedPct: 86,
-  },
+export const linwei = {
+  name: "Lin Wei",
+  age: 27,
+  role: "Freelance illustrator",
+  salaryMonthly: 3800,
+  city: "Singapore",
+  initials: "LW",
+  accentClass: "text-rose-600",
+  accentBg: "bg-rose-50",
 };
 
-export const timeline: TimelineStep[] = [
+export const couple = {
+  marriedMonths: 14,
+  marriedSince: "April 2025",
+  jointGoal: "First HDB and first child within the next 24 months",
+  living: "Lin Wei's family flat, Tampines",
+  yearsTogether: 4,
+  jointSavings: 38400,
+  jointEmergencyFloor: 18000,
+};
+
+export const envelopes: Envelope[] = [
+  { id: "e1", name: "Groceries", scope: "joint", budget: 800, used: 612, category: "Living" },
+  { id: "e2", name: "Dining out", scope: "joint", budget: 500, used: 487, category: "Living" },
+  { id: "e3", name: "Utilities + Telco", scope: "joint", budget: 320, used: 305, category: "Living" },
+  { id: "e4", name: "BTO down-payment", scope: "joint", budget: 125000, used: 38400, category: "Goals" },
+  { id: "e5", name: "Baby fund (start Q3 2027)", scope: "joint", budget: 22000, used: 4100, category: "Goals" },
+  { id: "e6", name: "Aaron discretionary", scope: "aaron", budget: 1400, used: 1820, category: "Personal" },
+  { id: "e7", name: "Aaron SRS top-up", scope: "aaron", budget: 7300, used: 0, category: "Goals" },
+  { id: "e8", name: "Lin Wei discretionary", scope: "linwei", budget: 900, used: 540, category: "Personal" },
+  { id: "e9", name: "Lin Wei studio supplies", scope: "linwei", budget: 480, used: 412, category: "Work" },
+];
+
+export const scenarios: Scenario[] = [
   {
-    id: "t1",
-    day: 2,
-    title: "FX sweep SGD to GBP",
-    amount: "SGD 1,200 to GBP 695",
-    destination: "GBP holding account",
-    reversibility: "auto",
-    triggerRule: "Keep GBP balance above 800. Sweep when rate beats 0.578.",
-    whyContributions: [
-      { label: "live rate 0.579", weight: 88 },
-      { label: "GBP balance 612", weight: 71 },
-      { label: "salary FX cost this month", weight: 44 },
+    id: "hdb",
+    title: "HDB resale vs BTO",
+    tension: "Aaron wants a Punggol BTO (longer wait, cheaper). Lin Wei wants a Bishan resale (closer to her parents, available now).",
+    options: [
+      {
+        label: "Punggol BTO Standard, 4-room",
+        cost: "SGD 380k indicative · 3-4 year wait",
+        tradeoff: "Down-payment fully covered by joint CPF OA. No cash gap. Lin Wei moves further from parents.",
+      },
+      {
+        label: "Bishan resale, 4-room",
+        cost: "SGD 830k median (HDB 2024) · move within 6 months",
+        tradeoff: "SGD 207k down-payment, joint CPF OA covers SGD 165k, cash gap SGD 42k. Closer to Lin Wei's parents.",
+      },
+      {
+        label: "Parallel path: ballot Punggol, save for Bishan",
+        cost: "Cost of the ballot is SGD 0. Goal is SGD 42k in 12 months.",
+        tradeoff: "Atlas-proposed compromise. Ballot Punggol as a no-cost option. Build the Bishan cash gap in parallel.",
+      },
     ],
-    confidence: 91,
-    counterfactual: "If rate dropped to 0.560 the sweep would pause and you would be notified.",
-    status: "scheduled",
-    petals: ["Information", "Order-taking", "Payment", "Billing"],
+    atlasNote:
+      "Aaron and Lin Wei, both paths are financially feasible. The non-money variable you each named matters here: Lin Wei's parent proximity, Aaron's wait-time anxiety. I will not pick. Talk for 15 minutes, I will check in next week.",
+    petals: ["Information", "Consultation", "Exceptions"],
+    aisaqual: ["Personalisation", "Transparency", "Anthropomorphism"],
+  },
+  {
+    id: "child",
+    title: "First child cost runway",
+    tension: "Lin Wei is considering a year of unpaid leave after the birth. Aaron is worried about cashflow but does not want to be the one who tells her no.",
+    options: [
+      {
+        label: "Full year unpaid leave",
+        cost: "Household income drop SGD 81k (gross + CPF, MOM median, directional)",
+        tradeoff: "Liquid reserves fall to SGD 11k by month 9, below the joint emergency floor.",
+      },
+      {
+        label: "Six months unpaid, then Anchor infant-care",
+        cost: "Income drop SGD 41k. Net infant-care SGD 675/month after subsidy (ECDA 2024).",
+        tradeoff: "Reserves stay above floor. Lin Wei flagged career identity in the Q4 check-in.",
+      },
+      {
+        label: "Return at month 4, parent-and-Anchor split",
+        cost: "Income drop SGD 27k. Mum-in-law helps 2 days a week.",
+        tradeoff: "Best on numbers, hardest on Lin Wei's preference. Atlas does not recommend.",
+      },
+    ],
+    atlasNote:
+      "Aaron and Lin Wei, here is what each option costs and here is what each of you said matters. The decision is yours. Baby Bonus, CDA First Step, and the MediSave Grant are applied in all three.",
+    petals: ["Information", "Consultation", "Safekeeping"],
     aisaqual: ["Reliability", "Personalisation", "Transparency"],
   },
   {
-    id: "t2",
-    day: 9,
-    title: "Pay DBS Altitude card in full",
-    amount: "SGD 2,418",
-    destination: "Altitude card 4621",
-    reversibility: "oneTap",
-    triggerRule: "Pay the card in full from main account two days before due.",
-    whyContributions: [
-      { label: "statement closed", weight: 92 },
-      { label: "main account buffer", weight: 70 },
-      { label: "interest avoided 26 percent APR", weight: 65 },
+    id: "envelope",
+    title: "Envelope mediator: the SGD 4,000 espresso machine",
+    tension:
+      "Aaron bought a SGD 4,000 espresso machine from his individual account. The shared appliance budget category ticks down. Lin Wei feels blindsided about whether this was joint or individual.",
+    options: [
+      {
+        label: "Re-categorise as individual",
+        cost: "Aaron absorbs from his discretionary over 3 months (SGD 1,333/month).",
+        tradeoff: "Lin Wei's joint appliance envelope stays whole. Aaron tight on discretionary till Apr.",
+      },
+      {
+        label: "Re-categorise as joint",
+        cost: "Both absorb from joint appliance envelope. Goal pushed by 2 months.",
+        tradeoff: "Symmetric burden. BTO down-payment timeline shifts by 2 months.",
+      },
+      {
+        label: "Joint plus update rule to SGD 1,000",
+        cost: "Same as joint. Going forward, appliances above SGD 1,000 are flagged.",
+        tradeoff: "Atlas-proposed. Lowers the threshold so this surprise does not recur.",
+      },
     ],
-    confidence: 96,
-    counterfactual: "If main account would dip below SGD 8,000 buffer, only minimum due would be auto-paid.",
-    status: "scheduled",
-    petals: ["Order-taking", "Payment", "Billing"],
-    aisaqual: ["Reliability", "Transparency"],
-  },
-  {
-    id: "t3",
-    day: 14,
-    title: "Kopi Studio inventory advance",
-    amount: "SGD 4,500",
-    destination: "Kopi Studio business current",
-    reversibility: "oneTap",
-    triggerRule: "When Founder pipeline approves a tranche, release working capital to business account.",
-    whyContributions: [
-      { label: "approved tranche from Founder", weight: 95 },
-      { label: "Shopify receivables next 14d", weight: 78 },
-      { label: "no chargebacks last 90d", weight: 62 },
-    ],
-    confidence: 89,
-    counterfactual: "If Shopify receivables drop below SGD 3,000 the release pauses and asks for review.",
-    status: "scheduled",
-    petals: ["Order-taking", "Payment", "Consultation"],
-    aisaqual: ["Reliability", "Personalisation", "Transparency"],
-  },
-  {
-    id: "t4",
-    day: 18,
-    title: "SRS top-up by 31 Dec",
-    amount: "SGD 15,300",
-    destination: "DBS SRS account",
-    reversibility: "biometric",
-    triggerRule: "Top up SRS to the annual cap before 31 December if taxable income is above 80k and cash buffer holds.",
-    whyContributions: [
-      { label: "taxable income SGD 142k", weight: 86 },
-      { label: "SRS balance SGD 0 ytd", weight: 81 },
-      { label: "tax saving estimate SGD 2,295", weight: 73 },
-    ],
-    confidence: 88,
-    counterfactual: "If buffer drops below SGD 6,000 the top-up halves and you are alerted.",
-    status: "scheduled",
-    petals: ["Information", "Consultation", "Order-taking", "Payment", "Safekeeping"],
-    aisaqual: ["Reliability", "Personalisation", "Transparency", "Security"],
-  },
-  {
-    id: "t5",
-    day: 24,
-    title: "Sweep above emergency floor to digiPortfolio",
-    amount: "SGD 3,100",
-    destination: "digiPortfolio Growth Plus",
-    reversibility: "auto",
-    triggerRule: "Anything above SGD 12,000 emergency floor moves into digiPortfolio Growth Plus weekly.",
-    whyContributions: [
-      { label: "buffer above floor", weight: 84 },
-      { label: "digiPortfolio drift below band", weight: 52 },
-      { label: "salary credited 25 Dec", weight: 49 },
-    ],
-    confidence: 93,
-    counterfactual: "If buffer drops below floor, sweep pauses and you keep your safety cushion.",
-    status: "scheduled",
-    petals: ["Information", "Order-taking", "Payment", "Safekeeping"],
-    aisaqual: ["Reliability", "Personalisation", "Security"],
-  },
-  {
-    id: "t6",
-    day: 28,
-    title: "Parents allowance to mum",
-    amount: "SGD 800",
-    destination: "Tan Lai Heng (POSB savings)",
-    reversibility: "oneTap",
-    triggerRule: "Monthly allowance transfer to mum, day 28.",
-    whyContributions: [
-      { label: "recurring rule, 14 months consistent", weight: 99 },
-      { label: "buffer healthy", weight: 64 },
-    ],
-    confidence: 99,
-    counterfactual: "If main account dips below floor the transfer is delayed by 48 hours and you are asked to confirm.",
-    status: "scheduled",
-    petals: ["Order-taking", "Payment", "Hospitality"],
-    aisaqual: ["Reliability", "Personalisation"],
+    atlasNote:
+      "Aaron and Lin Wei, the rule you set at onboarding was SGD 500 flagged for joint review, but the espresso machine was on Aaron's individual account so it did not trigger the flag in time. Three options, you both confirm.",
+    petals: ["Order-taking", "Consultation", "Exceptions"],
+    aisaqual: ["Transparency", "Anthropomorphism", "Personalisation"],
   },
 ];
 
-export const founderStages: FounderStage[] = [
+export const atlasJointThread: AtlasMessage[] = [
   {
-    id: "f1",
-    index: 1,
-    title: "Connect Xero and Shopify",
-    status: "approved",
-    artifact: "Imported 18 months of Kopi Studio books and 312 Shopify orders. Average monthly revenue SGD 4,600 trending up 18 percent QoQ.",
-    reasoning: "Read-only OAuth. Used to ground every later step in real numbers, not estimates.",
-    petals: ["Information", "Safekeeping"],
-    aisaqual: ["Reliability", "Security"],
+    id: "m1",
+    speaker: "atlas",
+    audience: "joint",
+    text:
+      "Aaron and Lin Wei, good evening. The shared groceries envelope is at 77 percent with 6 days left in the month. No action needed.",
   },
   {
-    id: "f2",
-    index: 2,
-    title: "Draft 12-month cashflow forecast",
-    status: "review",
-    artifact:
-      "Forecast: revenue SGD 73k, COGS SGD 31k, opex SGD 18k, net SGD 24k. Sensitivity tested on minus 30 percent revenue still keeps positive operating cash.",
-    reasoning: "Forecast uses your real seasonality. Hari Raya, NDP, and Christmas peaks weighted on three years of Shopify history.",
-    petals: ["Information", "Consultation"],
-    aisaqual: ["Personalisation", "Transparency"],
+    id: "m2",
+    speaker: "atlas",
+    audience: "joint",
+    text:
+      "Quarterly check-in is due on the 20th. Ten questions each, separately. I will read both answers, neither of you will see the other's words. I will surface the patterns only.",
   },
   {
-    id: "f3",
-    index: 3,
-    title: "Write the credit narrative",
-    status: "drafting",
-    artifact:
-      "Kopi Studio is a Singapore-based small-batch ceramics brand. Inventory financing of SGD 35k is requested to fund a six-month build for the Q3 Tokyo pop-up. Repayment is keyed to Shopify daily settlement at three percent of gross sales.",
-    reasoning: "Plain English, founder voice, written from your books. You edit any sentence before it is sent.",
-    petals: ["Order-taking", "Consultation", "Hospitality"],
-    aisaqual: ["Personalisation", "Anthropomorphism", "Transparency"],
+    id: "m3",
+    speaker: "aaron",
+    audience: "joint",
+    text: "Atlas, can you pull the HDB side-by-side? Lin Wei and I are stuck on this again.",
   },
   {
-    id: "f4",
-    index: 4,
-    title: "Propose covenants and pricing",
-    status: "pending",
-    artifact:
-      "Suggested: revenue-share repayment 3 percent of Shopify gross, cap SGD 41k, no personal guarantee, 12-month term.",
-    reasoning: "Comparable to Shopify Capital and SME loans on IDEAL; benchmark spread cited.",
-    petals: ["Billing", "Consultation"],
-    aisaqual: ["Reliability", "Transparency"],
-  },
-  {
-    id: "f5",
-    index: 5,
-    title: "Run the FEAT and AI Verify check",
-    status: "pending",
-    artifact:
-      "Pre-decision bias check: no prohibited variables used (gender, race, religion, marital status). FEAT memo auto-generated. AI Verify test report attached.",
-    reasoning: "MAS FEAT requirement. Visible to you before you submit.",
-    petals: ["Information", "Safekeeping"],
-    aisaqual: ["Transparency", "Security", "Reliability"],
-  },
-  {
-    id: "f6",
-    index: 6,
-    title: "You review and approve the application",
-    status: "pending",
-    artifact: "Single signed PDF assembled from approved sections. Edits tracked.",
-    reasoning: "You own every page. Biometric signature with 10-second cool-off, like Plan irreversibles.",
-    petals: ["Order-taking", "Safekeeping", "Exceptions"],
-    aisaqual: ["Security", "Reliability"],
-  },
-  {
-    id: "f7",
-    index: 7,
-    title: "DBS underwriting decision",
-    status: "pending",
-    artifact: "Indicative decision in 4 working hours, final in 48 hours. Decision feeds into Plan as approved tranche.",
-    reasoning: "Hand-off to DBS CreditAI plus a human credit officer. Decision explanation returned.",
-    petals: ["Information", "Consultation"],
-    aisaqual: ["Reliability", "Transparency"],
-  },
-  {
-    id: "f8",
-    index: 8,
-    title: "Disbursement linked to Plan",
-    status: "pending",
-    artifact: "If approved, funds release card t3 in Plan turns active. You see the link both ways.",
-    reasoning: "Closes the loop from Founder back to Plan. One product, one customer.",
-    petals: ["Payment", "Order-taking", "Exceptions"],
-    aisaqual: ["Reliability", "Transparency"],
+    id: "m4",
+    speaker: "atlas",
+    audience: "joint",
+    text:
+      "Aaron, Lin Wei, here are the two paths and a third I want to propose. I will not pick. The non-money variables you each named in October are also on this card.",
   },
 ];
+
+export const divergenceFlag: DivergenceFlag = {
+  metric: "Quarterly savings rate",
+  aaron: "14% of net income",
+  linwei: "22% of net income",
+  gap: "8 percentage points",
+  threshold: "Atlas flags when sustained above 6 percentage points for 3 months",
+  triggered: true,
+};
 
 export const aisaqualGlossary: Record<string, string> = {
-  Reliability: "The agent does what it said it would do, on the trigger conditions you set.",
-  Personalisation: "Decisions are grounded in your real cashflow, rules, and goals.",
-  Anthropomorphism: "The Mirror has a face, a voice, and speaks in your parlance.",
-  Tangibility: "Visual, scannable, no hidden state. You can point at every choice.",
-  Transparency: "Every card opens to show data, weights, confidence, and counterfactual.",
-  Security: "Biometric on irreversible actions, 10-second cool-off, freeze switch, audit log.",
+  Reliability: "Atlas does what it said it would do, on the rules the couple set.",
+  Personalisation: "Grounded in the couple's actual accounts and their stated values.",
+  Anthropomorphism: "Atlas has a name, an avatar, a voice that always names both partners.",
+  Tangibility: "Visual, scannable, two-partner side-by-sides on every decision.",
+  Transparency: "Every Atlas suggestion shows the rule, the data, the rejected alternative.",
+  Security: "Joint visibility is category-level by default. Line-item disclosure is opt-in.",
 };
 
 export const petalGlossary: Record<string, string> = {
   Information: "Curated, contextual data shown before a decision.",
-  "Order-taking": "Customer states intent; system confirms and queues.",
-  Billing: "Statements, receipts, fee schedules shown clearly.",
-  Payment: "Money moves on the stated rule.",
-  Consultation: "Advice grounded in customer-specific evidence.",
-  Hospitality: "Tone, parlance, warmth, branch hand-off.",
-  Safekeeping: "Custody of funds, identity, and data.",
-  Exceptions: "Overrides, freezes, complaints, human escalation.",
+  "Order-taking": "Couple states the intent. Atlas confirms.",
+  Billing: "Statements, receipts, fee schedules visible to both.",
+  Payment: "Money moves only on a rule both partners confirmed.",
+  Consultation: "Advice grounded in the couple's data and the dyadic check-in.",
+  Hospitality: "Tone, parlance, warmth. Atlas names both partners, never 'you' alone.",
+  Safekeeping: "Custody of joint and individual funds, with category-level disclosure default.",
+  Exceptions: "Overrides, envelope mediator, freeze, dispute escalation to human RM.",
 };

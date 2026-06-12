@@ -1,4 +1,4 @@
-export type Reversibility = "auto" | "oneTap" | "biometric";
+export type Partner = "aaron" | "linwei" | "joint";
 
 export type PetalTag =
   | "Information"
@@ -18,36 +18,37 @@ export type AisaqualTag =
   | "Transparency"
   | "Security";
 
-export interface TimelineStep {
+export interface Envelope {
   id: string;
-  day: number;
+  name: string;
+  scope: "joint" | "aaron" | "linwei";
+  budget: number;
+  used: number;
+  category: string;
+}
+
+export interface Scenario {
+  id: "hdb" | "child" | "envelope";
   title: string;
-  amount: string;
-  destination: string;
-  reversibility: Reversibility;
-  triggerRule: string;
-  whyContributions: { label: string; weight: number }[];
-  confidence: number;
-  counterfactual: string;
-  status: "scheduled" | "executed" | "frozen";
+  tension: string;
+  options: { label: string; cost: string; tradeoff: string }[];
+  atlasNote: string;
   petals: PetalTag[];
   aisaqual: AisaqualTag[];
 }
 
-export interface FounderStage {
+export interface AtlasMessage {
   id: string;
-  index: number;
-  title: string;
-  status: "pending" | "drafting" | "review" | "approved";
-  artifact: string;
-  reasoning: string;
-  petals: PetalTag[];
-  aisaqual: AisaqualTag[];
-}
-
-export interface MirrorMessage {
-  language: "Singlish" | "Mandarin" | "Bahasa";
+  speaker: "atlas" | "aaron" | "linwei";
   text: string;
-  mood: "content" | "worried" | "proud";
-  gapClosedPct: number;
+  audience: "joint" | "aaron" | "linwei";
+}
+
+export interface DivergenceFlag {
+  metric: string;
+  aaron: string;
+  linwei: string;
+  gap: string;
+  threshold: string;
+  triggered: boolean;
 }

@@ -1,199 +1,74 @@
 "use client";
-import { useMemo, useState } from "react";
-import TimelineCard from "@/components/TimelineCard";
-import WhyThisDrawer from "@/components/WhyThisDrawer";
-import ConsentGate from "@/components/ConsentGate";
-import { timeline as seed } from "@/lib/mockData";
-import { explainStep } from "@/lib/ai";
-import type { TimelineStep } from "@/lib/types";
-
-const initialRules = `keep emergency floor SGD 12,000
-sweep anything above floor into digiPortfolio
-keep GBP balance above 800, sweep SGD when rate beats 0.578
-pay DBS Altitude card in full two days before due
-top up SRS to the cap before 31 December
-send mum SGD 800 on day 28, never auto
-release Kopi Studio working capital when Founder approves a tranche`;
+import { useState, useMemo } from "react";
+import EnvelopeBar from "@/components/EnvelopeBar";
+import ScenarioCard from "@/components/ScenarioCard";
+import ViewSwitcher from "@/components/ViewSwitcher";
+import { envelopes, scenarios, divergenceFlag, aaron, linwei } from "@/lib/mockData";
+import type { Partner } from "@/lib/types";
 
 export default function PlanPage() {
-  const [rules, setRules] = useState(initialRules);
-  const [steps, setSteps] = useState<TimelineStep[]>(seed);
-  const [frozen, setFrozen] = useState(false);
-  const [day, setDay] = useState(0);
-  const [whyId, setWhyId] = useState<string | null>(null);
-  const [gateId, setGateId] = useState<string | null>(null);
+  const [view, setView] = useState<Partner>("joint");
 
-  const whyStep = useMemo(() => steps.find((s) => s.id === whyId) ?? null, [steps, whyId]);
-  const gateStep = useMemo(() => steps.find((s) => s.id === gateId) ?? null, [steps, gateId]);
+  const visible = useMemo(() => {
+    if (view === "joint") return envelopes.filter((e) => e.scope === "joint");
+    if (view === "aaron") return envelopes.filter((e) => e.scope === "joint" || e.scope === "aaron");
+    return envelopes.filter((e) => e.scope === "joint" || e.scope === "linwei");
+  }, [view]);
 
-  function advanceClock() {
-    const next = Math.min(30, day + 7);
-    setDay(next);
-    setSteps((prev) =>
-      prev.map((s) => {
-        if (frozen) return s;
-        if (s.day <= next && s.status === "scheduled" && s.reversibility === "auto") {
-          return { ...s, status: "executed" };
-        }
-        return s;
-      })
-    );
-  }
-
-  function resetClock() {
-    setDay(0);
-    setSteps(seed);
-  }
-
-  function executeGate(id: string) {
-    setSteps((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, status: "executed" } : s))
-    );
-    setGateId(null);
-  }
-
-  const rulesParaphrased = rules
-    .split("\n")
-    .map((r) => r.trim())
-    .filter(Boolean);
+  const headerNote = useMemo(() => {
+    if (view === "joint") return "Shared by both. Joint envelopes only.";
+    if (view === "aaron") return `Aaron's view. Joint envelopes (category-level visible to Lin Wei) plus Aaron's private envelopes (line items not visible to Lin Wei).`;
+    return `Lin Wei's view. Joint envelopes (category-level visible to Aaron) plus Lin Wei's private envelopes (line items not visible to Aaron).`;
+  }, [view]);
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8">
-      <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
+    <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="text-[11px] font-bold uppercase tracking-widest text-dbsRed">Horizon Plan</div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-dbsInk">
-            The rules you wrote, running on a 30-day clock.
-          </h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-dbsInk">Joint envelopes, private envelopes, three scenarios on the table.</h1>
           <p className="text-sm text-dbsGray mt-1 max-w-2xl">
-            The agent paraphrases your rules and queues them as cards. Green cards run on their own. Amber
-            cards ask for one tap. Red cards need your biometric and a ten-second cool-off. The freeze
-            switch above kills everything.
+            Switch the view to see what each partner sees. Joint envelopes use the neutral red bar; Aaron's private uses sky; Lin Wei's uses rose. Atlas only commits a change when both partners tap confirm.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={resetClock}
-            className="text-xs font-semibold px-3 py-1.5 rounded-md border border-dbsLine text-dbsInk hover:bg-dbsSurface"
-          >
-            Reset clock
-          </button>
-          <button
-            onClick={advanceClock}
-            className="text-xs font-semibold px-3 py-1.5 rounded-md bg-dbsInk text-white hover:opacity-90"
-          >
-            +7 days
-          </button>
-          <button
-            onClick={() => setFrozen((f) => !f)}
-            className={
-              "text-xs font-semibold px-3 py-1.5 rounded-md " +
-              (frozen
-                ? "bg-dbsRedDark text-white"
-                : "bg-dbsRed text-white hover:bg-dbsRedDark")
-            }
-          >
-            {frozen ? "Plan frozen · tap to resume" : "Freeze plan"}
-          </button>
-        </div>
+        <ViewSwitcher value={view} onChange={setView} />
       </div>
 
-      <div className="grid md:grid-cols-5 gap-6">
-        <div className="md:col-span-2 space-y-4">
-          <div className="bg-white border border-dbsLine rounded-2xl p-4 shadow-soft">
-            <div className="text-xs font-semibold uppercase tracking-wide text-dbsGray mb-1">Your rules</div>
-            <textarea
-              value={rules}
-              onChange={(e) => setRules(e.target.value)}
-              rows={9}
-              className="w-full text-sm font-mono text-dbsInk border border-dbsLine rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-dbsRed/30"
-            />
-            <div className="text-[11px] text-dbsGray mt-2 italic">
-              Plain English. Edit any line. The agent re-paraphrases live below.
-            </div>
-          </div>
-
-          <div className="bg-white border border-dbsLine rounded-2xl p-4 shadow-soft">
-            <div className="text-xs font-semibold uppercase tracking-wide text-dbsGray mb-2">
-              Agent paraphrase, tick to approve
-            </div>
-            <ul className="space-y-2">
-              {rulesParaphrased.map((r, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <input type="checkbox" defaultChecked className="mt-1 accent-dbsRed" />
-                  <span className="text-sm text-dbsInk">{r}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="bg-dbsRedLight border border-dbsRed/20 rounded-2xl p-4">
-            <div className="text-xs font-bold uppercase tracking-wide text-dbsRedDark mb-1">Risk visible</div>
-            <ul className="text-xs text-dbsInk space-y-1 list-disc ml-4">
-              <li>Auto-execute only when the action is reversible inside one business day.</li>
-              <li>One-tap when the action affects one party and is reversible within 48 hours.</li>
-              <li>Biometric plus 10-second cool-off when the action cannot be reversed.</li>
-              <li>Freeze switch above kills every queued action immediately.</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="md:col-span-3">
-          <div className="bg-white border border-dbsLine rounded-2xl p-4 shadow-soft">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-wide text-dbsGray">30-day plan</div>
-                <div className="text-base font-bold text-dbsInk">
-                  Day {day} of 30 {frozen && <span className="text-dbsRedDark"> · frozen</span>}
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wide">
-                <span className="px-2 py-0.5 rounded-full bg-dbsGreen/15 text-dbsGreen">auto</span>
-                <span className="px-2 py-0.5 rounded-full bg-dbsAmber/15 text-dbsAmber">one-tap</span>
-                <span className="px-2 py-0.5 rounded-full bg-dbsRed text-white">biometric</span>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              {steps.map((s) => (
-                <TimelineCard
-                  key={s.id}
-                  step={s}
-                  onWhy={() => setWhyId(s.id)}
-                  onConfirm={() => {
-                    if (s.reversibility === "biometric") setGateId(s.id);
-                    else
-                      setSteps((prev) =>
-                        prev.map((p) => (p.id === s.id ? { ...p, status: "executed" } : p))
-                      );
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
+      <div className="bg-dbsRedLight border border-dbsRed/20 rounded-xl p-3 text-xs text-dbsInk">
+        <span className="font-bold text-dbsRedDark uppercase tracking-widest text-[10px] mr-2">View note</span>
+        {headerNote}
       </div>
 
-      <WhyThisDrawer
-        open={!!whyStep}
-        onClose={() => setWhyId(null)}
-        title={whyStep?.title ?? ""}
-        paraphrase={whyStep ? explainStep(whyStep.title) : ""}
-        contributions={whyStep?.whyContributions ?? []}
-        confidence={whyStep?.confidence ?? 0}
-        counterfactual={whyStep?.counterfactual ?? ""}
-        petals={whyStep?.petals ?? []}
-        aisaqual={whyStep?.aisaqual ?? []}
-      />
+      <section className="grid md:grid-cols-3 gap-3">
+        {visible.map((e) => (
+          <EnvelopeBar key={e.id} env={e} />
+        ))}
+      </section>
 
-      <ConsentGate
-        open={!!gateStep}
-        onCancel={() => setGateId(null)}
-        onConfirmed={() => gateStep && executeGate(gateStep.id)}
-        title={gateStep?.title ?? ""}
-        amount={gateStep?.amount ?? ""}
-        destination={gateStep?.destination ?? ""}
-      />
+      {divergenceFlag.triggered && view === "joint" && (
+        <section className="bg-amber-50 border border-amber-300 rounded-2xl p-4">
+          <div className="text-[10px] font-bold uppercase tracking-widest text-amber-700">Goal divergence flag</div>
+          <div className="mt-1 text-sm text-dbsInk">
+            <strong>{divergenceFlag.metric}</strong>: Aaron at <strong className="text-sky-700">{divergenceFlag.aaron}</strong>, Lin Wei at <strong className="text-rose-700">{divergenceFlag.linwei}</strong>. Gap {divergenceFlag.gap}.
+          </div>
+          <div className="text-xs text-dbsGray mt-1">{divergenceFlag.threshold}. Atlas surfaces this as a conversation prompt, not a verdict.</div>
+        </section>
+      )}
+
+      <section>
+        <h2 className="text-lg font-bold text-dbsInk">Three scenarios Atlas is holding for you</h2>
+        <p className="text-sm text-dbsGray mt-1">Atlas surfaces options and trade-offs. Both partners pick. Atlas does not.</p>
+        <div className="space-y-4 mt-4">
+          {scenarios.map((s) => (
+            <ScenarioCard key={s.id} scenario={s} />
+          ))}
+        </div>
+      </section>
+
+      <div className="bg-white border border-dbsLine rounded-2xl p-4 text-xs text-dbsGray flex flex-wrap items-center gap-2 justify-between">
+        <span>Atlas can hold any couple scenario: weddings, parent care, sabbaticals, redundancy, inheritance, divorce contingencies, charitable giving.</span>
+        <a href="/atlas" className="font-semibold text-dbsRed hover:text-dbsRedDark">Talk to Atlas →</a>
+      </div>
     </div>
   );
 }

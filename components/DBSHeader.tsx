@@ -2,13 +2,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "./Logo";
-import TodayStrip from "./TodayStrip";
+import AtlasAvatar from "./AtlasAvatar";
+import { aaron, linwei } from "@/lib/mockData";
 
 const nav = [
   { href: "/", label: "Overview" },
   { href: "/mirror", label: "Mirror" },
   { href: "/plan", label: "Plan" },
-  { href: "/founder", label: "Founder" },
+  { href: "/atlas", label: "Atlas" },
 ];
 
 export default function DBSHeader() {
@@ -38,14 +39,31 @@ export default function DBSHeader() {
             );
           })}
           <div className="ml-3 pl-3 border-l border-dbsLine flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-dbsRed text-white flex items-center justify-center text-xs font-bold">
-              MT
+            <AtlasAvatar mode="joint" size={28} />
+            <div className="hidden sm:flex items-center gap-1.5">
+              <div className="w-7 h-7 rounded-full bg-sky-600 text-white flex items-center justify-center text-[10px] font-bold">
+                {aaron.initials}
+              </div>
+              <div className="w-7 h-7 rounded-full bg-rose-600 text-white flex items-center justify-center text-[10px] font-bold">
+                {linwei.initials}
+              </div>
             </div>
-            <span className="text-sm font-medium text-dbsInk hidden sm:inline">Mei Tan</span>
+            <span className="text-xs font-semibold text-dbsInk hidden lg:inline">A + LW joint</span>
           </div>
         </nav>
       </div>
-      <TodayStrip />
+      <div className="bg-dbsSurface border-b border-dbsLine">
+        <div className="max-w-6xl mx-auto px-6 py-1.5 flex items-center gap-3 text-[11px] text-dbsGray flex-wrap">
+          <span className="font-bold uppercase tracking-widest text-dbsRed">Today across Atlas</span>
+          <span>Joint groceries 77% · 6 days left</span>
+          <span className="opacity-60">·</span>
+          <span>Aaron discretionary <span className="text-rose-600 font-semibold">over by SGD 420</span></span>
+          <span className="opacity-60">·</span>
+          <span>Lin Wei savings rate 22% vs Aaron 14%, <span className="text-dbsRedDark font-semibold">flag</span></span>
+          <span className="opacity-60">·</span>
+          <span>Q4 check-in due 20 Jul</span>
+        </div>
+      </div>
     </header>
   );
 }
