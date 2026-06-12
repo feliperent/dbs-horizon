@@ -1,6 +1,6 @@
 # DBS Horizon
 
-Prototype built for the La Salle Barcelona study-tour deliverable on DBS Bank Singapore. Team Mireia Albà, Daniel Puiggròs, Felipe Rentería, Neharika Aguilar plus two co-leads.
+Prototype built for the La Salle Barcelona study-tour deliverable on DBS Bank Singapore. Team Mireia Albà, Daniel Puiggròs, Felipe Rentería, Ana, Marc, Joshua.
 
 A single-page Next.js app that demonstrates a new client-facing AI feature for DBS, targeted at Singapore dual-track professionals aged 28-39 (salaried plus side-hustle or founder intent). Three surfaces: Mirror, Plan, Founder.
 

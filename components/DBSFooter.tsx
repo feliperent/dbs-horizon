@@ -10,7 +10,7 @@ export default function DBSFooter() {
           <span>Horizon prototype</span>
         </div>
         <div className="md:text-center">
-          La Salle Barcelona study tour. Group: Mireia, Daniel, Felipe, Neharika + 2.
+          La Salle Barcelona study tour. Group: Mireia, Daniel, Felipe, Ana, Marc, Joshua.
         </div>
         <div className="md:text-right">
           Built against MAS FEAT, AI Verify, PDPA, EU AI Act Art. 6. Not a real DBS product.
