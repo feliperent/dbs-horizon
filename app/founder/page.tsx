@@ -7,11 +7,12 @@ export default function FounderPage() {
       <div className="mb-6">
         <div className="text-[11px] font-bold uppercase tracking-widest text-dbsRed">Horizon Founder</div>
         <h1 className="text-2xl md:text-3xl font-extrabold text-dbsInk">
-          The agent drafts your credit case to DBS. You approve every page.
+          The credit case writes itself. You sign every page.
         </h1>
         <p className="text-sm text-dbsGray mt-1 max-w-2xl">
-          Side-hustle on Shopify, freelance income, or a registered sole-proprietorship. The agent reads
-          your books, drafts the funding ask, runs the FEAT and AI Verify check, and you sign. No broker.
+          Connect your books. The agent reads Xero and Shopify, drafts the cashflow forecast, the
+          narrative, and the covenant proposal back to DBS. FEAT and AI Verify run before submission. No
+          broker, no spreadsheet wrangling.
         </p>
       </div>
 

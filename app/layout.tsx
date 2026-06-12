@@ -5,7 +5,8 @@ import DBSFooter from "@/components/DBSFooter";
 
 export const metadata: Metadata = {
   title: "DBS Horizon",
-  description: "Your financial future, motivated and executed. A DBS prototype.",
+  description: "Write the rules. The bank runs them. You hold the irreversibles. A prototype.",
+  icons: { icon: "/dbs-shield.png" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

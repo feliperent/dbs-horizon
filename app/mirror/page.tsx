@@ -14,11 +14,12 @@ export default function MirrorPage() {
       <div className="mb-6">
         <div className="text-[11px] font-bold uppercase tracking-widest text-dbsRed">Horizon Mirror</div>
         <h1 className="text-2xl md:text-3xl font-extrabold text-dbsInk">
-          Your future self, grounded in your real cashflow.
+          See yourself at 65. In your own parlance.
         </h1>
         <p className="text-sm text-dbsGray mt-1 max-w-2xl">
-          Built on Hershfield 2011 future-self continuity research. The portrait, parlance, and gap meter
-          update as you change behaviour. This is the pre-use surface of the customer journey.
+          The portrait, the message, and the comfort-gap meter come from your real DBS cashflow projected
+          forward. Pull the slider, the face changes, the parlance changes, the gap shrinks. Based on
+          Hershfield 2011 on future-self continuity.
         </p>
       </div>
 

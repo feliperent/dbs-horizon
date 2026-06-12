@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "./Logo";
+import TodayStrip from "./TodayStrip";
 
 const nav = [
   { href: "/", label: "Overview" },
@@ -44,6 +45,7 @@ export default function DBSHeader() {
           </div>
         </nav>
       </div>
+      <TodayStrip />
     </header>
   );
 }

@@ -1,23 +1,24 @@
 import Link from "next/link";
+import Image from "next/image";
 import { customer } from "@/lib/mockData";
 
 const tiles = [
   {
     href: "/mirror",
     title: "Mirror",
-    blurb: "See yourself at 65, in your own parlance, grounded in your real DBS cashflow.",
+    blurb: "See yourself at 65, in your own parlance, drawn from your real DBS cashflow.",
     aisaqual: ["Anthropomorphism", "Tangibility", "Personalisation"],
   },
   {
     href: "/plan",
     title: "Plan",
-    blurb: "Write the rules. The agent runs them for the next 30 days, with a consent gate before anything irreversible.",
+    blurb: "Write the rules. The agent runs them. You approve anything irreversible.",
     aisaqual: ["Reliability", "Security", "Transparency"],
   },
   {
     href: "/founder",
     title: "Founder",
-    blurb: "When you start a business, the agent drafts your credit case to DBS, section by section. You approve every page.",
+    blurb: "When you start a side business, the agent drafts your credit case to DBS. You sign every page.",
     aisaqual: ["Personalisation", "Anthropomorphism", "Transparency"],
   },
 ];
@@ -39,17 +40,18 @@ export default function Home() {
       <section className="bg-white border border-dbsLine rounded-2xl shadow-soft overflow-hidden">
         <div className="grid md:grid-cols-5">
           <div className="md:col-span-3 px-7 py-8">
-            <div className="text-[11px] font-bold uppercase tracking-widest text-dbsRed">
-              DBS Horizon · prototype
+            <div className="text-[11px] font-bold uppercase tracking-widest text-dbsRed flex items-center gap-2">
+              <Image src="/dbs-shield.png" alt="" width={20} height={20} className="h-5 w-5 object-contain" />
+              <span>Horizon · prototype</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-dbsInk mt-2 leading-tight">
-              Your financial future, motivated and executed.
+            <h1 className="text-3xl md:text-4xl font-extrabold text-dbsInk mt-3 leading-tight">
+              Tell the bank how your money should move.
             </h1>
-            <p className="text-sm text-dbsGray mt-3 max-w-lg">
-              One product for Singapore dual-track professionals 28-39, salaried with a side-hustle or
-              founder intent. Three surfaces, one customer, one plan.
+            <p className="text-base text-dbsGray mt-3 max-w-lg">
+              Write the rules in plain English. We run them for the next 30 days. You approve every step
+              that cannot be undone.
             </p>
-            <div className="flex flex-wrap gap-2 mt-5">
+            <div className="flex flex-wrap gap-2 mt-6">
               <Link
                 href="/mirror"
                 className="px-4 py-2 rounded-md bg-dbsRed text-white text-sm font-semibold hover:bg-dbsRedDark"
@@ -60,7 +62,7 @@ export default function Home() {
                 href="/plan"
                 className="px-4 py-2 rounded-md border border-dbsLine text-dbsInk text-sm font-semibold hover:bg-dbsSurface"
               >
-                See the Plan
+                Go to Plan
               </Link>
               <Link
                 href="/founder"
@@ -104,6 +106,28 @@ export default function Home() {
             </div>
           </Link>
         ))}
+      </section>
+
+      <section className="bg-white border border-dbsLine rounded-2xl p-6 shadow-soft">
+        <div className="text-xs font-bold uppercase tracking-widest text-dbsRed">How the three surfaces share state</div>
+        <h2 className="text-xl font-extrabold text-dbsInk mt-1">One product. One customer. One continuous plan.</h2>
+        <div className="mt-5 grid md:grid-cols-3 gap-4 text-sm">
+          <div className="border border-dbsLine rounded-xl p-4 bg-dbsSurface">
+            <div className="font-bold text-dbsRedDark">Mirror reveals the gap</div>
+            <p className="text-dbsInk mt-1">A face at 65, in your parlance. You see what is missing before you write a single rule.</p>
+            <div className="text-dbsRed mt-2 font-bold">↓ motivates</div>
+          </div>
+          <div className="border border-dbsLine rounded-xl p-4 bg-dbsSurface">
+            <div className="font-bold text-dbsRedDark">Plan closes the gap</div>
+            <p className="text-dbsInk mt-1">Your rules run for 30 days. Irreversible cards stop at a biometric consent gate with a ten-second cool-off.</p>
+            <div className="text-dbsRed mt-2 font-bold">↓ funds growth via</div>
+          </div>
+          <div className="border border-dbsLine rounded-xl p-4 bg-dbsSurface">
+            <div className="font-bold text-dbsRedDark">Founder fuels the business</div>
+            <p className="text-dbsInk mt-1">The agent drafts your SME credit case. When approved, the disbursement becomes a card in Plan, and Mirror updates because the gap shrank.</p>
+            <div className="text-dbsRed mt-2 font-bold">↑ loops back to Mirror</div>
+          </div>
+        </div>
       </section>
 
       <section className="bg-white border border-dbsLine rounded-2xl p-6 shadow-soft">

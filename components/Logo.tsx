@@ -1,35 +1,44 @@
-export default function Logo({ className = "h-7 w-auto" }: { className?: string }) {
+import Image from "next/image";
+
+export default function Logo({ variant = "wordmark" }: { variant?: "wordmark" | "shield" | "compact" }) {
+  if (variant === "shield") {
+    return (
+      <Image
+        src="/dbs-shield.png"
+        alt="DBS"
+        width={32}
+        height={32}
+        priority
+        className="h-7 w-7 object-contain"
+      />
+    );
+  }
+  if (variant === "compact") {
+    return (
+      <Image
+        src="/dbs-compact.webp"
+        alt="DBS"
+        width={120}
+        height={48}
+        priority
+        className="h-7 w-auto object-contain"
+      />
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 32"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      aria-label="DBS Horizon"
-    >
-      <rect x="0" y="0" width="46" height="32" rx="3" fill="#C8102E" />
-      <text
-        x="23"
-        y="22"
-        textAnchor="middle"
-        fontFamily="Inter, system-ui, sans-serif"
-        fontWeight="800"
-        fontSize="16"
-        fill="#FFFFFF"
-        letterSpacing="1"
-      >
-        DBS
-      </text>
-      <text
-        x="54"
-        y="22"
-        fontFamily="Inter, system-ui, sans-serif"
-        fontWeight="700"
-        fontSize="16"
-        fill="#1B1B1B"
-        letterSpacing="0.5"
-      >
-        Horizon
-      </text>
-    </svg>
+    <div className="flex items-center gap-2">
+      <Image
+        src="/dbs-shield.png"
+        alt="DBS"
+        width={32}
+        height={32}
+        priority
+        className="h-8 w-8 object-contain"
+      />
+      <div className="leading-tight">
+        <div className="text-[15px] font-extrabold text-dbsInk tracking-tight">DBS</div>
+        <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-dbsRed -mt-0.5">Horizon</div>
+      </div>
+    </div>
   );
 }

@@ -63,11 +63,12 @@ export default function PlanPage() {
         <div>
           <div className="text-[11px] font-bold uppercase tracking-widest text-dbsRed">Horizon Plan</div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-dbsInk">
-            Tell DBS how your money should move. Watch it happen.
+            The rules you wrote, running on a 30-day clock.
           </h1>
           <p className="text-sm text-dbsGray mt-1 max-w-2xl">
-            The rules you wrote, paraphrased by the agent, executed on a 30-day timeline. A consent gate
-            sits in front of every irreversible action.
+            The agent paraphrases your rules and queues them as cards. Green cards run on their own. Amber
+            cards ask for one tap. Red cards need your biometric and a ten-second cool-off. The freeze
+            switch above kills everything.
           </p>
         </div>
         <div className="flex items-center gap-2">
